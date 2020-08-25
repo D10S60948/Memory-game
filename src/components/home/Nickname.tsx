@@ -8,6 +8,7 @@ export default function Nickname() {
         <View style={styles.container}>
             <TextInput
                 placeholder='בחר כינוי'
+                placeholderTextColor={colors.DARK_GREY}
                 style={styles.input}
                 onChangeText={text => setNickname(text)}
             />

@@ -10,7 +10,9 @@ export interface StackNavigationProps<
 }
 
 export type RootStackParamList = {
-  Home: undefined;
+    Home: undefined;
+    GameType: undefined;
+    CategorySelect: undefined;
 };
 
 

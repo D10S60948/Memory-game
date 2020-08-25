@@ -1,19 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import Background from '../components/home/Background';
-import Title from '../components/home/Title';
-import { RootStackParamList, StackNavigationProps } from '../shared/navigation';
 import { colors } from '../shared/consts';
-import Nickname from '../components/home/Nickname';
-import Button from '../components/home/Button';
+import { Button, Nickname, Background, Title } from '../components/home';
 
-export default function Home({ navigation }: StackNavigationProps<RootStackParamList, 'Home'>) {
+export default function Home() {
     return (
         <View style={styles.container}>
             <Background />
             <Title />
-            <View style={{ flex: 1.2 }}>
+            <View style={{ flex: 1.2, justifyContent: 'space-around' }}>
                 <Nickname />
                 <Button />
             </View>
