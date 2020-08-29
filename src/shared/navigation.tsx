@@ -13,6 +13,7 @@ export type RootStackParamList = {
     Home: undefined;
     GameType: undefined;
     CategorySelect: undefined;
+    Game: undefined;
 };
 
 

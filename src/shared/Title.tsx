@@ -3,12 +3,13 @@ import { Text, View } from 'react-native';
 
 interface Props {
     text: string,
-    fontSize?: number
+    fontSize?: number,
+    marginBottom?: number
 };
 
-export default function Title({ text, fontSize = 36 }: Props) {
+export default function Title({ text, fontSize = 36, marginBottom = 0 }: Props) {
     return (
-        <View style={{ alignItems: 'center' }}>
+        <View style={{ alignItems: 'center', marginBottom }}>
             <Text style={{ fontFamily: 'Gan', fontSize }}>{text}</Text>
         </View>
     );

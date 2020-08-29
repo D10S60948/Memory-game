@@ -7,6 +7,7 @@ import { useFonts } from 'expo-font';
 import Home from './src/screens/Home';
 import GameType from './src/screens/GameType';
 import CategorySelect from './src/screens/CategorySelect';
+import Game from './src/screens/Game';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -29,6 +30,7 @@ export default function App() {
                     <Stack.Screen name="Home" component={Home} />
                     <Stack.Screen name="GameType" component={GameType} />
                     <Stack.Screen name="CategorySelect" component={CategorySelect} />
+                    <Stack.Screen name="Game" component={Game} />
                 </Stack.Navigator>
             </NavigationContainer>
         );
