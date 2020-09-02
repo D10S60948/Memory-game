@@ -1,31 +1,55 @@
-import React, { useState, useEffect } from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
-import { Card, Score, Button } from '../components/game';
-import { colors } from '../shared/consts';
 import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, StyleSheet, View } from 'react-native';
+import { Button, Card, Score, WinningPopup } from '../components/game';
 import { animals, mixCards } from '../components/game/DATA';
+import { colors } from '../shared/consts';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../redux/types';
+import { resetGame } from '../redux/game/actions';
 
 const NUMBER_OF_COLUMNS = 5;
 const width = (Dimensions.get('screen').width - 50) / NUMBER_OF_COLUMNS;
 const height = width * 1.05;
 
 export default function Game() {
+    const dispatch = useDispatch();
     const navigation = useNavigation();
-    const [turn, setTurn] = useState(0);
     const [cards, setCards] = useState(new Array);
-    const toggleTurn = () => setTurn(1 - turn);
+    const { discoveredPairs } = useSelector((state: RootState) => state.game);
+    const [symbol, setSymbol] = useState<Symbol>();
+    const [isWinningModalVisible, setWinningModalVisibility] = useState(false);
 
     useEffect(() => {
+        setSymbol(Symbol());
         setCards(mixCards(animals));
-    }, [animals])
+    }, [])
+
+    useEffect(() => {
+        if (cards.length > 0 && discoveredPairs === cards.length / 2) {
+            setTimeout(() => {
+                setWinningModalVisibility(true);
+                setTimeout(() => {
+                    setWinningModalVisibility(false);
+                    reset();
+                }, 3500);
+            }, 1000);
+        }
+    }, [discoveredPairs])
+
+    const reset = () => {
+        setCards(mixCards(animals));
+        setSymbol(Symbol());
+        dispatch(resetGame());
+    }
 
     return (
         <View style={styles.container}>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                 {
-                    cards && cards.map((item, index) => {
+                    cards.map((item, index) => {
                         return (
-                            <Card {...item} {...{ height, width, index }} key={index} />
+                            <Card {...item} {...{ height, width, index, symbol }} key={index} />
                         )
                     })
                 }
@@ -33,8 +57,9 @@ export default function Game() {
             <Score />
             <View style={{ flex: 0.9, flexDirection: 'row' }} >
                 <Button text='חזרה' backgroundColor={colors.RED} onPress={() => navigation.goBack()} />
-                <Button text='חדש' backgroundColor={colors.PURPLE} onPress={() => console.log('do something')} />
+                <Button text='חדש' backgroundColor={colors.PURPLE} onPress={reset} />
             </View>
+            <WinningPopup isVisible={isWinningModalVisible} />
         </View>
     );
 }

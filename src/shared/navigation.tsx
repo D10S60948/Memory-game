@@ -14,6 +14,7 @@ export type RootStackParamList = {
     GameType: undefined;
     CategorySelect: undefined;
     Game: undefined;
+    NickNameSelect: undefined;
 };
 
 

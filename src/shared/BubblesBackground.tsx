@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
-export default function Background() {
+export default function BubblesBackground() {
     return (
         <>
             <View style={styles.bigBubble} />

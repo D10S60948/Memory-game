@@ -3,6 +3,7 @@ export const colors = {
     RED: '#EB5757',
     PURPLE: '#924FD1',
     DARK_GREY: 'rgb(70,70,70)',
+    VERY_DARK_GREY: 'rgb(30,30,30)',
     LIGHT_GREY: 'rgb(180,180,180)',
     VERY_LIGHT_GREY: 'rgb(220,220,220)',
     OFFWHITE: 'rgb(240,240,240)'
