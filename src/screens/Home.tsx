@@ -12,7 +12,7 @@ export default function Home() {
             <BubblesBackground />
             <Title text="ברוכים הבאים" />
             <Title text="למשחק הזיכרון" fontSize={64} />
-            <WideButton text="התחל" onPress={() => navigation.navigate('GameType')} />
+            <WideButton text="התחל" onPress={() => navigation.navigate('GameTypeSelect')} />
             <StatusBar style="auto" />
         </View>
     );

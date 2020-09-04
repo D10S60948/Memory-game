@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, TextInput } from 'react-native';
 import { colors } from '../../shared/consts';
 import { useDispatch, useSelector } from 'react-redux';
-import { setNickname } from '../../redux/general/actions';
-import { RootState } from '../../redux/types';
+import { setNickname } from '../../redux/gameSettings/actions';
+import { RootState } from '../../redux';
 
 interface NicknameProps {
     player: number;
 }
 
 export default function Nickname({ player }: NicknameProps) {
-    const { nicknames: { player1, player2 } } = useSelector((state: RootState) => state.general);
+    const { nicknames: { player1, player2 } } = useSelector((state: RootState) => state.gameSettings);
     const [placeholder, setPlaceholder] = useState(`שחקן ${player.toString()}`);
     useEffect(() => {
         if (player === 1 && player1.length > 0) {

@@ -1,21 +1,20 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
 import { RootStackParamList } from './src/shared/navigation';
 import { AppLoading } from 'expo';
 import { useFonts } from 'expo-font';
-import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import combinedReducers from './src/redux/reducers';
+import { createStackNavigator } from '@react-navigation/stack';
+import store from './src/redux';
 
 import Home from './src/screens/Home';
-import GameType from './src/screens/GameType';
+import GameTypeSelect from './src/screens/GameTypeSelect';
 import CategorySelect from './src/screens/CategorySelect';
 import Game from './src/screens/Game';
 import NickNameSelect from './src/screens/NickNameSelect';
+import CardsAmountSelect from './src/screens/CardsAmountSelect';
 
 const Stack = createStackNavigator<RootStackParamList>();
-const store = createStore(combinedReducers);
 
 export default function App() {
     let [fontsLoaded] = useFonts({
@@ -35,10 +34,11 @@ export default function App() {
                 <NavigationContainer>
                     <Stack.Navigator headerMode='none'>
                         <Stack.Screen name="Home" component={Home} />
-                        <Stack.Screen name="GameType" component={GameType} />
+                        <Stack.Screen name="GameTypeSelect" component={GameTypeSelect} />
                         <Stack.Screen name="CategorySelect" component={CategorySelect} />
-                        <Stack.Screen name="Game" component={Game} />
                         <Stack.Screen name="NickNameSelect" component={NickNameSelect} />
+                        <Stack.Screen name="Game" component={Game} />
+                        <Stack.Screen name="CardsAmountSelect" component={CardsAmountSelect} />
                     </Stack.Navigator>
                 </NavigationContainer>
             </Provider>

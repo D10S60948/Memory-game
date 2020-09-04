@@ -2,12 +2,12 @@ import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { colors } from '../../shared/consts';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/types';
+import { RootState } from '../../redux';
 import { GameType } from '../../shared/types';
 
 export default function Score() {
     const { currentTurn: turn, score } = useSelector((state: RootState) => state.game);
-    const { nicknames: { player1, player2 }, gameType } = useSelector((state: RootState) => state.general);
+    const { nicknames: { player1, player2 }, gameType } = useSelector((state: RootState) => state.gameSettings);
     return (
         <View style={styles.container}>
             <Text style={styles.title}>ניקוד</Text>

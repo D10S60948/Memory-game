@@ -1,18 +1,20 @@
 import {
-    GeneralActionsTypes, GeneralStateTypes,
+    GameSettingsActionsTypes, GameSettingsStateTypes,
     SET_GAME_TYPE,
-    SET_NICKNAMES
+    SET_NICKNAMES,
+    SET_NUMBER_OF_CARD_PAIRS
 } from './types';
 
-const initialState: GeneralStateTypes = {
+const initialState: GameSettingsStateTypes = {
     gameType: 0,
     nicknames: {
         player1: '',
         player2: ''
-    }
+    },
+    numberOfPairs: 10
 }
 
-export default function (state = initialState, action: GeneralActionsTypes): GeneralStateTypes {
+export default function (state = initialState, action: GameSettingsActionsTypes): GameSettingsStateTypes {
     switch (action.type) {
         case SET_GAME_TYPE:
             return { ...state, gameType: action.payload };
@@ -24,6 +26,8 @@ export default function (state = initialState, action: GeneralActionsTypes): Gen
                 nicknames.player2 = action.nickname;
             }
             return { ...state, nicknames };
+        case SET_NUMBER_OF_CARD_PAIRS:
+            return {...state, numberOfPairs: action.pairs}
         default:
             return state;
     }

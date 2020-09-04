@@ -2,15 +2,14 @@ import {
     GameActionsTypes,
     SET_SELECTED_CARD_VALUE,
     RESET_SELECTED_CARD_VALUE,
-    ADD_TO_DISCOVERD_PAIRS,
-    RESET_GAME,
-    REMOVE_DISCOVERD_CARD_INDEX
+    RESET_GAME
 } from './types'
 
-export function setSelectedCard(cardValue: number): GameActionsTypes {
+export function setSelectedCard(value: number, index: number): GameActionsTypes {
     return {
         type: SET_SELECTED_CARD_VALUE,
-        payload: cardValue
+        value,
+        index
     }
 }
 
@@ -20,22 +19,9 @@ export function resetSelectedCards(): GameActionsTypes {
     }
 }
 
-export function addToDiscovoredPairs(value: number): GameActionsTypes {
+export function resetGame(pairs: number): GameActionsTypes {
     return {
-        type: ADD_TO_DISCOVERD_PAIRS,
-        payload: value
-    }
-}
-
-export function resetGame(): GameActionsTypes {
-    return {
-        type: RESET_GAME
-    }
-}
-
-export function removeDiscoveredCardsIndex(selectedIndex: number): GameActionsTypes {
-    return {
-        type: REMOVE_DISCOVERD_CARD_INDEX,
-        selectedIndex
+        type: RESET_GAME,
+        pairs
     }
 }

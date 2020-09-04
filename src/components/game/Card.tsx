@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState, useImperativeHandle } from 'react';
 import { Animated, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { resetSelectedCards, setSelectedCard, removeDiscoveredCardsIndex } from '../../redux/game/actions';
-import { RootState } from '../../redux/types';
+import { resetSelectedCards, setSelectedCard } from '../../redux/game/actions';
+import { RootState } from '../../redux';
 import { shadowStyle } from '../../shared/consts';
 import CardBack from './card/CardBack';
+import { GameType } from '../../shared/types';
 
 interface CardProps {
     height: number;
@@ -13,19 +14,26 @@ interface CardProps {
     image: any;
     value: number;
     symbol: Symbol;
+    setFlippedCardsAmount: (amount: number) => void;
+    flippedCardsAmount: number;
 }
 
 
-const Card = React.forwardRef(({ image, value, height, width, index, symbol }: CardProps, ref) => {
+const Card = React.forwardRef(({ image, value, height, width, index, symbol, setFlippedCardsAmount, flippedCardsAmount }: CardProps, ref) => {
 
     const dispatch = useDispatch();
-    const selectedValues = useSelector((state: RootState) => state.game.selectedCardValues);
+    const { selectedCardValues: selectedValues, currentTurn } = useSelector((state: RootState) => state.game);
+    const { gameType } = useSelector((state: RootState) => state.gameSettings);
+
     const [shadow, setShadow] = useState(4);
     const [isFlipped, setFilpped] = useState(false);
     const [frontOpacity, setFrontOpacity] = useState(0);
     const [backOpacity, setBackOpacity] = useState(1);
     const [cardOpacity] = useState(new Animated.Value(1));
     const [isDiscovered, setDiscovered] = useState(false);
+
+    const rotateYValue = useRef(new Animated.Value(0)).current;
+    const turnoffScaleValue = useRef(new Animated.Value(1)).current;
 
     useEffect(() => {
         resetToInitialState();
@@ -47,8 +55,6 @@ const Card = React.forwardRef(({ image, value, height, width, index, symbol }: C
                 if (selectedValues[0] === selectedValues[1]) {
                     setDiscovered(true);
                     turnOff();
-                    dispatch(removeDiscoveredCardsIndex(index));
-                    // dispatch(addToDiscovoredPairs(value));
                 }
                 else {
                     flip();
@@ -56,6 +62,7 @@ const Card = React.forwardRef(({ image, value, height, width, index, symbol }: C
                         dispatch(resetSelectedCards());
                     }
                 }
+                setFlippedCardsAmount(0);
             }, 800);
         }
     }, [selectedValues, isFlipped])
@@ -64,8 +71,6 @@ const Card = React.forwardRef(({ image, value, height, width, index, symbol }: C
         setFrontOpacity(1 - frontOpacity);
         setBackOpacity(1 - backOpacity);
     }
-    const rotateYValue = useRef(new Animated.Value(0)).current;
-    const turnoffScaleValue = useRef(new Animated.Value(1)).current;
 
     const flip = () => {
         setShadow(0);
@@ -111,9 +116,10 @@ const Card = React.forwardRef(({ image, value, height, width, index, symbol }: C
     }
 
     const onCardSelect = () => {
-        if (isFlipped === false && selectedValues.length < 2) {
+        if (isFlipped === false && flippedCardsAmount < 2) {
             flip();
-            dispatch(setSelectedCard(value));
+            setFlippedCardsAmount(flippedCardsAmount + 1);
+            dispatch(setSelectedCard(value, index));
         }
     }
 
@@ -121,7 +127,7 @@ const Card = React.forwardRef(({ image, value, height, width, index, symbol }: C
         cardSelect() {
             if (isFlipped === false) {
                 flip();
-                dispatch(setSelectedCard(value));
+                dispatch(setSelectedCard(value, index));
             }
         }
     }));
@@ -138,14 +144,15 @@ const Card = React.forwardRef(({ image, value, height, width, index, symbol }: C
     const degreeGenerator = (num: number) => (num * 29) % 17 * (num % 2 === 0 ? -1 : 1);
     const rotate = `${degreeGenerator(index)}deg`;
 
-    return (
+    const isUserTurn = gameType !== GameType.COMPUTER || currentTurn === 0;
 
+    return (
         <Animated.View
             style={{ height, width, opacity: cardOpacity, transform: [{ scale: turnoffScaleValue }] }}
         >
             <TouchableOpacity
                 style={{ flex: 1 }}
-                onPress={onCardSelect}
+                onPress={() => (isUserTurn) && onCardSelect()}
             >
                 <Animated.View style={[styles.card, { transform: [{ rotate }, { rotateY }, { scale }] }, { ...shadowStyle(shadow) }]}>
                     <CardBack opacity={backOpacity} text='בעלי חיים' />

@@ -1,13 +1,13 @@
 import React from 'react';
-import { StyleSheet, View, FlatList, TouchableOpacity, Text } from 'react-native';
+import { FlatList, StyleSheet } from 'react-native';
+import { Card, data } from '../components/categorySelect';
+import { Title } from '../shared';
+import Background from '../shared/Background';
 import { colors } from '../shared/consts';
-import { BackButton, Title } from '../shared';
-import { data, Card } from '../components/categorySelect';
 
 export default function CategorySelect() {
     return (
-        <View style={styles.container}>
-            <BackButton toScreen='GameType' />
+        <Background bubbles backButton>
             <Title text='קטגוריה' marginBottom={20} />
             <FlatList
                 ListHeaderComponentStyle={{ marginTop: 30 }}
@@ -17,7 +17,7 @@ export default function CategorySelect() {
                 numColumns={2}
                 showsVerticalScrollIndicator={false}
             />
-        </View>
+        </Background>
     );
 }
 

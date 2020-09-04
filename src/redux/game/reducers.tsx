@@ -2,8 +2,7 @@ import {
     GameStateTypes, GameActionsTypes,
     SET_SELECTED_CARD_VALUE,
     RESET_SELECTED_CARD_VALUE,
-    RESET_GAME,
-    REMOVE_DISCOVERD_CARD_INDEX
+    RESET_GAME
 } from './types';
 
 const initialState: GameStateTypes = {
@@ -11,17 +10,21 @@ const initialState: GameStateTypes = {
     discoveredPairs: 0,
     selectedCardValues: [],
     currentTurn: 0,
-    unselectedCardsIndex: []
+    unselectedCardsIndex: [],
+    firstFlippedIndex: -1
 }
 
 export default function (state = initialState, action: GameActionsTypes): GameStateTypes {
     switch (action.type) {
         case SET_SELECTED_CARD_VALUE:
             let { currentTurn, selectedCardValues, score, discoveredPairs } = state;
+            var firstFlippedIndex = 0, unselectedIndexes = [...state.unselectedCardsIndex];
             const twoCardsFlipped = selectedCardValues.length === 1;
-            const goodGuess = selectedCardValues[0] === action.payload;
             if (twoCardsFlipped) {
+                const goodGuess = selectedCardValues[0] === action.value;
                 if (goodGuess) {
+                    unselectedIndexes.splice(unselectedIndexes.indexOf(action.index), 1);
+                    unselectedIndexes.splice(unselectedIndexes.indexOf(state.firstFlippedIndex), 1);
                     discoveredPairs++;
                     score[currentTurn]++;
                 }
@@ -29,19 +32,18 @@ export default function (state = initialState, action: GameActionsTypes): GameSt
                     currentTurn = 1 - state.currentTurn;
                 }
             }
-            return { ...state, selectedCardValues: [...state.selectedCardValues, action.payload], currentTurn, score, discoveredPairs };
+            else {
+                firstFlippedIndex = action.index;
+            }
+            return { ...state, selectedCardValues: [...state.selectedCardValues, action.value], currentTurn, score, discoveredPairs, unselectedCardsIndex: [...unselectedIndexes], firstFlippedIndex };
         case RESET_SELECTED_CARD_VALUE:
             return { ...state, selectedCardValues: [] };
         case RESET_GAME:
             const unselectedCardsIndex: Array<number> = [];
-            for (let i = 0; i < 30; i++) {
+            for (let i = 0; i < action.pairs * 2; i++) {
                 unselectedCardsIndex.push(i);
             }
-            return { score: [0, 0], discoveredPairs: 0, selectedCardValues: [], currentTurn: 0, unselectedCardsIndex };
-        case REMOVE_DISCOVERD_CARD_INDEX:
-            const unselectedIndexes = [...state.unselectedCardsIndex];
-            unselectedIndexes.splice(unselectedIndexes.indexOf(action.selectedIndex), 1);
-            return { ...state, unselectedCardsIndex: [...unselectedIndexes] };
+            return { score: [0, 0], discoveredPairs: 0, selectedCardValues: [], currentTurn: 0, unselectedCardsIndex, firstFlippedIndex: 0 };
         default:
             return state;
     }

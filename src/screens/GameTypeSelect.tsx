@@ -3,7 +3,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { Line, Selection } from '../components/gameType';
-import { setGameType } from '../redux/general/actions';
+import { setGameType } from '../redux/gameSettings/actions';
 import { BackButton, Title } from '../shared';
 import { colors } from '../shared/consts';
 import { GameType } from '../shared/types';
@@ -14,14 +14,14 @@ export default function GameTypeSelect() {
 
     const select = (type: GameType) => {
         dispatch(setGameType(type));
-        navigation.navigate('NickNameSelect');
+        navigation.navigate('CategorySelect');
     }
     const againstComputer = () => select(GameType.COMPUTER);
     const sameDevice = () => select(GameType.SAME_DEVICE);
     return (
         <View style={styles.container}>
-            <BackButton toScreen='Home' />
-            <Title text='סוג משחק' />
+            {/* <BackButton /> */}
+            <Title text='סוג משחק' marginTop={40} />
             <View style={styles.selectionArea}>
                 <Line />
                 <Selection text='נגד המחשב' onPress={againstComputer} />
@@ -39,7 +39,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: colors.BLUE,
-        padding: 15
+        paddingHorizontal: 15,
+        paddingVertical: 30
     },
     selectionArea: {
         flex: 1,

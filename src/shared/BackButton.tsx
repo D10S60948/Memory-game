@@ -3,16 +3,12 @@ import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Entypo } from '@expo/vector-icons';
 
-interface Props {
-    toScreen: string
-}
-
-export default function BackButton({ toScreen }: Props) {
+export default function BackButton() {
     const navigation = useNavigation();
     return (
         <TouchableOpacity
             style={styles.container}
-            onPress={() => navigation.navigate(toScreen)}
+            onPress={() => navigation.goBack()}
         >
             <Text style={styles.text}>חזור</Text>
             <Entypo name="chevron-left" size={24} color="black" />
@@ -25,8 +21,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row-reverse',
         alignItems: 'center',
         justifyContent: 'flex-end',
-        paddingHorizontal: 20,
-        paddingVertical: 32
+        paddingTop: 32,
+        paddingBottom: 16
     },
     text: {
         fontSize: 24,

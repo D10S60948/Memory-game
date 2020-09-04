@@ -1,4 +1,4 @@
-import { ParamListBase, RouteProp, Route } from '@react-navigation/native';
+import { ParamListBase, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 export interface StackNavigationProps<
@@ -11,10 +11,11 @@ export interface StackNavigationProps<
 
 export type RootStackParamList = {
     Home: undefined;
-    GameType: undefined;
+    GameTypeSelect: undefined;
     CategorySelect: undefined;
     Game: undefined;
     NickNameSelect: undefined;
+    CardsAmountSelect: undefined;
 };
 
 

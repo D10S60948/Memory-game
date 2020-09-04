@@ -23,7 +23,7 @@ export default function CategoryCard({ title, image, value }: CategoryCardProps)
                 colors={['rgba(0,0,0,0.5)', 'rgba(0,0,0,0.4)', 'transparent', 'transparent']}
                 style={StyleSheet.absoluteFillObject}
             />
-            <TouchableOpacity style={{ flex: 1, width: '100%' }} onPress={() => navigation.navigate('Game')}>
+            <TouchableOpacity style={{ flex: 1, width: '100%' }} onPress={() => navigation.navigate('CardsAmountSelect')}>
                 <Text style={styles.text}>{title}</Text>
             </TouchableOpacity>
         </ImageBackground>
