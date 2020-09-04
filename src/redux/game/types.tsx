@@ -5,6 +5,7 @@ export const RESET_SCORE = 'RESET_SCORE';
 export const SET_SELECTED_CARD_VALUE = 'SET_SELECTED_CARD_VALUE';
 export const RESET_SELECTED_CARD_VALUE = 'RESET_SELECTED_CARD_VALUE';
 export const RESET_GAME = 'RESET_GAME';
+export const REMOVE_DISCOVERD_CARD_INDEX = 'REMOVE_DISCOVERD_CARD_INDEX';
 
 // state 
 interface GameState {
@@ -12,6 +13,7 @@ interface GameState {
     discoveredPairs: number;
     selectedCardValues: Array<number>;
     currentTurn: number;
+    unselectedCardsIndex: Array<number>;
 }
 
 // actions
@@ -23,7 +25,11 @@ interface AddToDiscoveredPairsAction {
 interface ResetDiscoveredPairsAction {
     type: typeof RESET_DISCOVERD_PAIRS
 }
-type DiscoveredPairsAction = AddToDiscoveredPairsAction | ResetDiscoveredPairsAction;
+interface RemoveDiscoveredCardIndexAction {
+    type: typeof REMOVE_DISCOVERD_CARD_INDEX
+    selectedIndex: number
+}
+type DiscoveredPairsAction = AddToDiscoveredPairsAction | ResetDiscoveredPairsAction | RemoveDiscoveredCardIndexAction;
 
 // score
 interface IncrementScoreAction {

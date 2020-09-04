@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useImperativeHandle } from 'react';
 import { Animated, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { resetSelectedCards, setSelectedCard } from '../../redux/game/actions';
+import { resetSelectedCards, setSelectedCard, removeDiscoveredCardsIndex } from '../../redux/game/actions';
 import { RootState } from '../../redux/types';
 import { shadowStyle } from '../../shared/consts';
 import CardBack from './card/CardBack';
@@ -16,7 +16,7 @@ interface CardProps {
 }
 
 
-export default function Card({ image, value, height, width, index, symbol }: CardProps) {
+const Card = React.forwardRef(({ image, value, height, width, index, symbol }: CardProps, ref) => {
 
     const dispatch = useDispatch();
     const selectedValues = useSelector((state: RootState) => state.game.selectedCardValues);
@@ -47,6 +47,7 @@ export default function Card({ image, value, height, width, index, symbol }: Car
                 if (selectedValues[0] === selectedValues[1]) {
                     setDiscovered(true);
                     turnOff();
+                    dispatch(removeDiscoveredCardsIndex(index));
                     // dispatch(addToDiscovoredPairs(value));
                 }
                 else {
@@ -116,6 +117,15 @@ export default function Card({ image, value, height, width, index, symbol }: Car
         }
     }
 
+    useImperativeHandle(ref, () => ({
+        cardSelect() {
+            if (isFlipped === false) {
+                flip();
+                dispatch(setSelectedCard(value));
+            }
+        }
+    }));
+
     const rotateY = rotateYValue.interpolate({
         inputRange: [0, 1],
         outputRange: ['0deg', '180deg']
@@ -148,7 +158,7 @@ export default function Card({ image, value, height, width, index, symbol }: Car
             </TouchableOpacity>
         </Animated.View>
     );
-}
+})
 
 const styles = StyleSheet.create({
     card: {
@@ -160,3 +170,4 @@ const styles = StyleSheet.create({
         overflow: 'hidden'
     }
 })
+export default Card;
