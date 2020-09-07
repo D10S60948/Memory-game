@@ -1,12 +1,17 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, View, Modal, Text, Image } from 'react-native';
 import { shadowStyle, colors } from '../../shared/consts';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux';
 
 interface PopupProps {
     isVisible: boolean;
 }
 
 export default function WinningPopup({ isVisible }: PopupProps) {
+    const { score } = useSelector((state: RootState) => state.game);
+    const { nicknames } = useSelector((state: RootState) => state.gameSettings);
+    const winnerName = score[0] > score[1] ? nicknames.player1 : nicknames.player2;
     return (
         <Modal
             animationType='fade'
@@ -15,13 +20,20 @@ export default function WinningPopup({ isVisible }: PopupProps) {
         >
             <View style={styles.container}>
                 <View style={styles.box}>
-                    <Text style={styles.text}>והמנצח הגדול הוא....</Text>
-                    <Image
-                        source={{ uri: 'https://www.animatedimages.org/data/media/492/animated-fireworks-image-0065.gif' }}
-                        style={{ height: '40%', width: '60%' }}
-                        resizeMode='contain'
-                    />
-                    <Text style={styles.winner}>שחקן 1</Text>
+                    {
+                        score[0] === score[1] ?
+                            <React.Fragment>
+                                <Text style={styles.text}>והמנצח הגדול הוא....</Text>
+                                <Image
+                                    source={{ uri: 'https://www.animatedimages.org/data/media/492/animated-fireworks-image-0065.gif' }}
+                                    style={{ height: '40%', width: '60%' }}
+                                    resizeMode='contain'
+                                />
+                                <Text style={styles.winner}>שחקן 1</Text>
+                            </React.Fragment>
+                            :
+                            <Text style={styles.text}>תיקו !</Text>
+                    }
                 </View>
             </View>
         </Modal>

@@ -2,7 +2,8 @@ import {
     GameSettingsActionsTypes, GameSettingsStateTypes,
     SET_GAME_TYPE,
     SET_NICKNAMES,
-    SET_NUMBER_OF_CARD_PAIRS
+    SET_NUMBER_OF_CARD_PAIRS,
+    SET_CATEGORY
 } from './types';
 
 const initialState: GameSettingsStateTypes = {
@@ -11,7 +12,8 @@ const initialState: GameSettingsStateTypes = {
         player1: '',
         player2: ''
     },
-    numberOfPairs: 10
+    numberOfPairs: 10,
+    category: 'animals'
 }
 
 export default function (state = initialState, action: GameSettingsActionsTypes): GameSettingsStateTypes {
@@ -27,7 +29,9 @@ export default function (state = initialState, action: GameSettingsActionsTypes)
             }
             return { ...state, nicknames };
         case SET_NUMBER_OF_CARD_PAIRS:
-            return {...state, numberOfPairs: action.pairs}
+            return { ...state, numberOfPairs: action.pairs };
+        case SET_CATEGORY:
+            return { ...state, category: action.category };
         default:
             return state;
     }

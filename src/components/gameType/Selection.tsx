@@ -1,17 +1,21 @@
 import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { colors, shadowStyle } from '../../shared/consts';
+import Soon from './Soon';
 
 interface SelectionProps {
     text: string;
-    onPress: () => void
+    onPress: () => void;
+    soon?: boolean;
 }
 
-export default function Selection({text, onPress}: SelectionProps) {
+export default function Selection({ text, onPress, soon = false }: SelectionProps) {
     return (
         <View style={styles.container}>
+            {soon && <Soon />}
             <Text style={styles.text}>{text}</Text>
-            <TouchableOpacity {...{onPress}}
+            <TouchableOpacity {...{ onPress }}
+                disabled={soon}
                 style={styles.button}
             >
                 <Text style={styles.buttonText}>בחר</Text>
@@ -32,7 +36,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Assistant',
         fontSize: 22,
         color: colors.DARK_GREY,
-        flex: 1, 
+        flex: 1,
         paddingLeft: 30
     },
     button: {

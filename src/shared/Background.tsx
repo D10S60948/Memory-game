@@ -6,12 +6,13 @@ import { colors } from './consts';
 interface BackgroundProps {
     bubbles?: boolean;
     backButton?: boolean;
+    style?: object;
     children: JSX.Element[] | JSX.Element;
 }
 
-export default function Background({ children, bubbles = false, backButton = false }: BackgroundProps) {
+export default function Background({ children, bubbles = false, backButton = false, style = {} }: BackgroundProps) {
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, style]}>
             {bubbles && <BubblesBackground />}
             {backButton && <BackButton />}
             {children}

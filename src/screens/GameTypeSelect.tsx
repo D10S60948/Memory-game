@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { Line, Selection } from '../components/gameType';
 import { setGameType } from '../redux/gameSettings/actions';
-import { BackButton, Title } from '../shared';
+import { Title } from '../shared';
 import { colors } from '../shared/consts';
 import { GameType } from '../shared/types';
 
@@ -28,7 +28,7 @@ export default function GameTypeSelect() {
                 <Line />
                 <Selection text='נגד מישהו אחר על אותו המכשיר' onPress={sameDevice} />
                 <Line />
-                <Selection text='נגד מישהו אחר מרחבי הרשת' onPress={() => console.log('ניסיון')} />
+                <Selection text='נגד מישהו אחר מרחבי הרשת' onPress={() => console.log('ניסיון')} soon />
                 <Line />
             </View>
         </View>

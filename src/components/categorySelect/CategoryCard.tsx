@@ -3,15 +3,22 @@ import React from 'react';
 import { ImageBackground, ImageSourcePropType, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { colors, shadowStyle } from '../../shared/consts';
 import { useNavigation } from '@react-navigation/native';
+import { setCategory } from '../../redux/gameSettings/actions';
+import { useDispatch } from 'react-redux';
 
 interface CategoryCardProps {
-    title: string,
-    image: ImageSourcePropType,
-    value: string
+    title: string;
+    image: ImageSourcePropType;
+    value: 'animals' | 'sport' | 'transportation' | 'food';
 }
 
 export default function CategoryCard({ title, image, value }: CategoryCardProps) {
     const navigation = useNavigation();
+    const dispatch = useDispatch();
+    const onCategorySelect = () => {
+        dispatch(setCategory(value));
+        navigation.navigate('CardsAmountSelect');
+    }
     return (
         <ImageBackground
             source={image}
@@ -23,7 +30,7 @@ export default function CategoryCard({ title, image, value }: CategoryCardProps)
                 colors={['rgba(0,0,0,0.5)', 'rgba(0,0,0,0.4)', 'transparent', 'transparent']}
                 style={StyleSheet.absoluteFillObject}
             />
-            <TouchableOpacity style={{ flex: 1, width: '100%' }} onPress={() => navigation.navigate('CardsAmountSelect')}>
+            <TouchableOpacity style={{ flex: 1, width: '100%' }} onPress={onCategorySelect}>
                 <Text style={styles.text}>{title}</Text>
             </TouchableOpacity>
         </ImageBackground>

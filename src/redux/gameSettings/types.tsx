@@ -2,6 +2,7 @@ import { GameType } from '../../shared/types';
 export const SET_GAME_TYPE = 'SET_GAME_TYPE';
 export const SET_NICKNAMES = 'SET_NICKNAMES';
 export const SET_NUMBER_OF_CARD_PAIRS = 'SET_NUMBER_OF__CARD_PAIRS';
+export const SET_CATEGORY = 'SET_CATEGORY';
 
 interface Nicknames {
     player1: string;
@@ -13,6 +14,7 @@ interface GameSettingsState {
     gameType: GameType;
     nicknames: Nicknames;
     numberOfPairs: number;
+    category: 'animals' | 'sport' | 'transportation' | 'food' | 'cartoons';
 }
 
 // actions
@@ -38,6 +40,13 @@ interface SetNumberOfCardPairs {
 }
 type CardPairsActions = SetNumberOfCardPairs;
 
+// category
+interface SetCategory {
+    type: typeof SET_CATEGORY;
+    category: 'animals' | 'sport' | 'transportation' | 'food' | 'cartoons';
+}
+type CategoryActions = SetCategory;
 
-export type GameSettingsActionsTypes = GameTypeActions | NicknamesActions | CardPairsActions;
+
+export type GameSettingsActionsTypes = GameTypeActions | NicknamesActions | CardPairsActions | CategoryActions;
 export type GameSettingsStateTypes = GameSettingsState;

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { resetSelectedCards, setSelectedCard } from '../../redux/game/actions';
 import { RootState } from '../../redux';
 import { shadowStyle } from '../../shared/consts';
-import CardBack from './card/CardBack';
+import CardBack from './CardBack';
 import { GameType } from '../../shared/types';
 
 interface CardProps {
@@ -23,8 +23,9 @@ const Card = React.forwardRef(({ image, value, height, width, index, symbol, set
 
     const dispatch = useDispatch();
     const { selectedCardValues: selectedValues, currentTurn } = useSelector((state: RootState) => state.game);
-    const { gameType } = useSelector((state: RootState) => state.gameSettings);
+    const { gameType, category } = useSelector((state: RootState) => state.gameSettings);
 
+    const [backText, setBackText] = useState('');
     const [shadow, setShadow] = useState(4);
     const [isFlipped, setFilpped] = useState(false);
     const [frontOpacity, setFrontOpacity] = useState(0);
@@ -43,10 +44,31 @@ const Card = React.forwardRef(({ image, value, height, width, index, symbol, set
         if (isFlipped) {
             flip();
         }
+        _setBackText();
         setFrontOpacity(0);
         setBackOpacity(1);
         cardOpacity.setValue(1);
         setDiscovered(false);
+    }
+
+    const _setBackText = () => {
+        switch(category){
+            case 'animals':
+                setBackText('בעלי חיים');
+                break;
+            case 'cartoons':
+                setBackText('דמויות מצוירות');
+                break;
+            case 'food':
+                setBackText('אוכל');
+                break;
+            case 'sport':
+                setBackText('ספורט');
+                break;
+            case 'transportation':
+                setBackText('תחבורה');
+                break;
+        }
     }
 
     useEffect(() => {
@@ -155,7 +177,7 @@ const Card = React.forwardRef(({ image, value, height, width, index, symbol, set
                 onPress={() => (isUserTurn) && onCardSelect()}
             >
                 <Animated.View style={[styles.card, { transform: [{ rotate }, { rotateY }, { scale }] }, { ...shadowStyle(shadow) }]}>
-                    <CardBack opacity={backOpacity} text='בעלי חיים' />
+                    <CardBack opacity={backOpacity} text={backText} />
                     <Image
                         source={image}
                         resizeMode='cover'

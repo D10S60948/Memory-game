@@ -3,7 +3,7 @@ import React, { createRef, useEffect, useState } from 'react';
 import { Dimensions, StyleSheet, View, ActivityIndicator } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Card, Score, WinningPopup } from '../components/game';
-import { animals, mixCards } from '../components/game/DATA';
+import { animals, cartoons, food, sport, transportation, mixCards } from '../components/game/DATA';
 import { RootState } from '../redux';
 import { resetGame } from '../redux/game/actions';
 import { colors } from '../shared/consts';
@@ -15,7 +15,7 @@ export default function Game() {
 
     const dispatch = useDispatch();
     const { discoveredPairs, unselectedCardsIndex, currentTurn } = useSelector((state: RootState) => state.game);
-    const { gameType, numberOfPairs } = useSelector((state: RootState) => state.gameSettings);
+    const { gameType, numberOfPairs, category } = useSelector((state: RootState) => state.gameSettings);
 
     const [cards, setCards] = useState(new Array);
     const [cardsRefs, setCardsRefs] = useState(new Array);
@@ -44,9 +44,25 @@ export default function Game() {
         setFlippedCardsAmount(0);
         dispatch(resetGame(numberOfPairs));
         setSymbol(Symbol());
-        const mixedCards = mixCards(animals.slice(0, numberOfPairs));
+        const data = getCardsData();
+        const mixedCards = mixCards(data.slice(0, numberOfPairs));
         setCards(mixedCards);
         setCardsRefs(cardsRefs => Array(mixedCards.length).fill().map((_, i) => cardsRefs[i] || createRef()));
+    }
+
+    const getCardsData = () => {
+        switch (category) {
+            case 'animals':
+                return animals;
+            case 'food':
+                return food;
+            case 'sport':
+                return sport;
+            case 'transportation':
+                return transportation;
+            case 'cartoons':
+                return cartoons;
+        }
     }
 
     useEffect(() => {
