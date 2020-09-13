@@ -15,8 +15,8 @@
 	<li>נגד מישהו אחר ברחבי הרשת - בקרוב</li>
 </ul>
 <div style="display:flex;flex-direction;">
-	<img dir='rtl' align='right' width="200" height="380" src="https://res.cloudinary.com/dexts7jfo/image/upload/v1599821493/demo_wdrefg.gif" />
-	<img dir='rtl' align='right' width="200" height="380" src="https://res.cloudinary.com/dexts7jfo/image/upload/v1599821573/categories_gd6i2w.png" />
-	<img dir='rtl' align='right' width="200" height="380" src="https://res.cloudinary.com/dexts7jfo/image/upload/v1599821574/nicknames_fdi5nx.png" />
+	<img dir='rtl' align='right' width="250" height="420" src="https://res.cloudinary.com/dexts7jfo/image/upload/v1599821493/demo_wdrefg.gif" />
+	<img dir='rtl' align='right' width="250" height="420" src="https://res.cloudinary.com/dexts7jfo/image/upload/v1599821573/categories_gd6i2w.png" />
+	<img dir='rtl' align='right' width="250" height="420" src="https://res.cloudinary.com/dexts7jfo/image/upload/v1599821574/nicknames_fdi5nx.png" />
 </div>
 </body>
