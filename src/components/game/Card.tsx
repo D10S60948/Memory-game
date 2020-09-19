@@ -16,13 +16,17 @@ interface CardProps {
     symbol: Symbol;
     setFlippedCardsAmount: (amount: number) => void;
     flippedCardsAmount: number;
+    onlineGameProps: {
+        socket: SocketIOClient.Socket | null;
+        gameId: number;
+    }
 }
 
 
-const Card = React.forwardRef(({ image, value, height, width, index, symbol, setFlippedCardsAmount, flippedCardsAmount }: CardProps, ref) => {
+const Card = React.forwardRef(({ image, value, height, width, index, symbol, setFlippedCardsAmount, flippedCardsAmount, onlineGameProps }: CardProps, ref) => {
 
     const dispatch = useDispatch();
-    const { selectedCardValues: selectedValues, currentTurn } = useSelector((state: RootState) => state.game);
+    const { selectedCardValues: selectedValues, currentTurn, firstFlippedIndex } = useSelector((state: RootState) => state.game);
     const { gameType, category } = useSelector((state: RootState) => state.gameSettings);
 
     const [backText, setBackText] = useState('');
@@ -32,6 +36,7 @@ const Card = React.forwardRef(({ image, value, height, width, index, symbol, set
     const [backOpacity, setBackOpacity] = useState(1);
     const [cardOpacity] = useState(new Animated.Value(1));
     const [isDiscovered, setDiscovered] = useState(false);
+    const [available, setAvailability] = useState(true);
 
     const rotateYValue = useRef(new Animated.Value(0)).current;
     const turnoffScaleValue = useRef(new Animated.Value(1)).current;
@@ -39,6 +44,34 @@ const Card = React.forwardRef(({ image, value, height, width, index, symbol, set
     useEffect(() => {
         resetToInitialState();
     }, [symbol])
+
+    useEffect(() => {
+        const computerTurn = gameType === GameType.COMPUTER && currentTurn === 1;
+        const otherPlayerTurn = gameType === GameType.ONLINE && currentTurn === 1;
+        setAvailability(computerTurn === false && otherPlayerTurn === false);
+    }, [currentTurn])
+
+    useEffect(() => {
+        if (isFlipped && selectedValues.length === 2 && isDiscovered === false) {
+            setTimeout(() => {
+                if (selectedValues[0] === selectedValues[1]) {
+                    setDiscovered(true);
+                    turnOff();
+                }
+                else {
+                    flip();
+                    if (selectedValues.length === 2) {
+                        if (index === firstFlippedIndex) {
+                            dispatch(resetSelectedCards());
+                        }
+                    }
+                }
+                if (index === firstFlippedIndex) {
+                    setFlippedCardsAmount(0);
+                }
+            }, 800);
+        }
+    }, [selectedValues, isFlipped])
 
     const resetToInitialState = () => {
         if (isFlipped) {
@@ -52,7 +85,7 @@ const Card = React.forwardRef(({ image, value, height, width, index, symbol, set
     }
 
     const _setBackText = () => {
-        switch(category){
+        switch (category) {
             case 'animals':
                 setBackText('בעלי חיים');
                 break;
@@ -71,30 +104,15 @@ const Card = React.forwardRef(({ image, value, height, width, index, symbol, set
         }
     }
 
-    useEffect(() => {
-        if (isFlipped && selectedValues.length === 2 && isDiscovered === false) {
-            setTimeout(() => {
-                if (selectedValues[0] === selectedValues[1]) {
-                    setDiscovered(true);
-                    turnOff();
-                }
-                else {
-                    flip();
-                    if (selectedValues.length === 2) {
-                        dispatch(resetSelectedCards());
-                    }
-                }
-                setFlippedCardsAmount(0);
-            }, 800);
-        }
-    }, [selectedValues, isFlipped])
-
     const switchOpacities = () => {
         setFrontOpacity(1 - frontOpacity);
         setBackOpacity(1 - backOpacity);
     }
 
     const flip = () => {
+        if (isFlipped === false) {
+            setFlippedCardsAmount(flippedCardsAmount + 1);
+        }
         setShadow(0);
         Animated.timing(rotateYValue, {
             toValue: 0.5,
@@ -109,6 +127,7 @@ const Card = React.forwardRef(({ image, value, height, width, index, symbol, set
             }).start(() => {
                 setShadow(4);
                 setFilpped(!isFlipped);
+                setAvailability(true);
             })
         });
     }
@@ -138,10 +157,16 @@ const Card = React.forwardRef(({ image, value, height, width, index, symbol, set
     }
 
     const onCardSelect = () => {
+        setAvailability(false);
         if (isFlipped === false && flippedCardsAmount < 2) {
             flip();
-            setFlippedCardsAmount(flippedCardsAmount + 1);
             dispatch(setSelectedCard(value, index));
+            if (gameType === GameType.ONLINE) {
+                onlineGameProps.socket?.emit('selectCard', index, onlineGameProps.gameId);
+            }
+        }
+        else {
+            setAvailability(true);
         }
     }
 
@@ -166,15 +191,13 @@ const Card = React.forwardRef(({ image, value, height, width, index, symbol, set
     const degreeGenerator = (num: number) => (num * 29) % 17 * (num % 2 === 0 ? -1 : 1);
     const rotate = `${degreeGenerator(index)}deg`;
 
-    const isUserTurn = gameType !== GameType.COMPUTER || currentTurn === 0;
-
     return (
         <Animated.View
             style={{ height, width, opacity: cardOpacity, transform: [{ scale: turnoffScaleValue }] }}
         >
             <TouchableOpacity
                 style={{ flex: 1 }}
-                onPress={() => (isUserTurn) && onCardSelect()}
+                onPress={() => available && onCardSelect()}
             >
                 <Animated.View style={[styles.card, { transform: [{ rotate }, { rotateY }, { scale }] }, { ...shadowStyle(shadow) }]}>
                     <CardBack opacity={backOpacity} text={backText} />

@@ -10,6 +10,7 @@ interface NicknameProps {
 }
 
 export default function Nickname({ player }: NicknameProps) {
+    const dispatch = useDispatch();
     const { nicknames: { player1, player2 } } = useSelector((state: RootState) => state.gameSettings);
     const [placeholder, setPlaceholder] = useState(`שחקן ${player.toString()}`);
     useEffect(() => {
@@ -20,7 +21,6 @@ export default function Nickname({ player }: NicknameProps) {
             setPlaceholder(player2);
         }
     },[player])
-    const dispatch = useDispatch();
     const setName = (text: string) => dispatch(setNickname(player, text));
     return (
         <View style={styles.container}>

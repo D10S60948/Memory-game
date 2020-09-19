@@ -1,6 +1,7 @@
 export const ADD_TO_DISCOVERD_PAIRS = 'ADD_TO_DISCOVERD_PAIR';
 export const INCREMENT_SCORE = 'INCREMENT_SCORE';
 export const SET_SELECTED_CARD_VALUE = 'SET_SELECTED_CARD_VALUE';
+export const SET_TURN = 'SET_TURN';
 export const RESET_SELECTED_CARD_VALUE = 'RESET_SELECTED_CARD_VALUE';
 export const RESET_GAME = 'RESET_GAME';
 
@@ -39,5 +40,10 @@ interface ResetGame {
 }
 type GameActions = ResetGame;
 
-export type GameActionsTypes = ScoreActions | SelectedCardActions | GameActions;
+interface SetTurn {
+    type: typeof SET_TURN;
+    turn: number;
+}
+
+export type GameActionsTypes = ScoreActions | SelectedCardActions | GameActions | SetTurn;
 export type GameStateTypes = GameState;

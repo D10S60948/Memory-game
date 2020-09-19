@@ -1,12 +1,16 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { createRef, useEffect, useState } from 'react';
-import { Dimensions, StyleSheet, View, ActivityIndicator } from 'react-native';
+import { ActivityIndicator, Dimensions, StyleSheet, Text, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+import io from 'socket.io-client';
+import { socketUrl } from '../../config';
 import { Button, Card, Score, WinningPopup } from '../components/game';
-import { animals, cartoons, food, sport, transportation, mixCards } from '../components/game/DATA';
+import { animals, cartoons, food, mixCards, sport, transportation } from '../components/game/DATA';
 import { RootState } from '../redux';
-import { resetGame } from '../redux/game/actions';
-import { colors } from '../shared/consts';
+import { resetGame, setTurn } from '../redux/game/actions';
+import { setCategory, setNickname, setNumberOfCardPairs } from '../redux/gameSettings/actions';
+import { CategoryType } from '../redux/gameSettings/types';
+import { colors, shadowStyle } from '../shared/consts';
 import { GameType } from '../shared/types';
 
 export default function Game() {
@@ -15,39 +19,96 @@ export default function Game() {
 
     const dispatch = useDispatch();
     const { discoveredPairs, unselectedCardsIndex, currentTurn } = useSelector((state: RootState) => state.game);
-    const { gameType, numberOfPairs, category } = useSelector((state: RootState) => state.gameSettings);
+    const { gameType, numberOfPairs, category, nicknames } = useSelector((state: RootState) => state.gameSettings);
 
     const [cards, setCards] = useState(new Array);
     const [cardsRefs, setCardsRefs] = useState(new Array);
     const [flippedCardsAmount, setFlippedCardsAmount] = useState(0);
     const [symbol, setSymbol] = useState<Symbol>();
     const [isWinningModalVisible, setWinningModalVisibility] = useState(false);
+    const [otherPlayerDiconnected, setOtherPlayerDiconnected] = useState(false);
+
+    const [ready, setReady] = useState(false);
+    const [socket, setSocket] = useState<SocketIOClient.Socket | null>(null);
+
+    const [waitingToOtherPlayer, setWaiting] = useState(false);
+    const [gameId, setGameId] = useState(0);
 
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
-    const [numberOfColumns, setNumberOfColumns] = useState(0);
 
     useEffect(() => {
         const columnsAmount = numberOfPairs === 10 ? 4 : 5;
         const width = (Dimensions.get('screen').width - 50) / columnsAmount;
         const height = width * (columnsAmount === 5 ? 1.05 : 1.02);
-        setNumberOfColumns(columnsAmount);
         setWidth(width);
         setHeight(height);
     }, [numberOfPairs])
 
     useEffect(() => {
-        restartGame();
+        if (gameType === GameType.ONLINE) {
+            setWaiting(true);
+            reset();
+            const socket = io(socketUrl);
+            socket.emit('join', nicknames.player1, category, numberOfPairs);
+            setSocket(socket);
+            socket.on('setSettings', (gameId: number, isFirst: boolean) => {
+                const onlinePlayerId = isFirst ? 1 : 2;
+                if (isFirst) {
+                    const mixedCards = setMixedCards();
+                    setGameCards(mixedCards);
+                    socket.emit('setGameCards', mixedCards);
+                } else {
+                    dispatch(setTurn(1));
+                    socket.on('setGameSettings', (cards: object[], category: CategoryType, numberOfPairs: number) => {
+                        dispatch(setCategory(category));
+                        dispatch(setNumberOfCardPairs(numberOfPairs));
+                        setGameCards(cards);
+                        socket.emit('readyToStart', gameId);
+                    })
+                }
+                setGameId(gameId);
+                socket.on('startGame', (nicknames: string[]) => {
+                    dispatch(setNickname(2, nicknames[2 - onlinePlayerId]));
+                    setReady(true);
+                    setWaiting(false);
+                })
+                socket.on('gameEnd', () => {
+                    setOtherPlayerDiconnected(true);
+                    setWinningModalVisibility(true);
+                })
+            })
+        }
+        else {
+            restartGame();
+            setReady(true);
+        }
     }, []);
 
+    useEffect(() => {
+        if (cardsRefs && cardsRefs.length > 0) {
+            socket?.on('cardSelect', (index: number) => {
+                cardsRefs[index].current.cardSelect();
+            });
+        }
+    }, [cardsRefs])
+
     const restartGame = () => {
-        setFlippedCardsAmount(0);
-        dispatch(resetGame(numberOfPairs));
-        setSymbol(Symbol());
+        reset();
+        const mixedCards = setMixedCards();
+        setGameCards(mixedCards);
+    }
+
+    const setMixedCards = () => {
         const data = getCardsData();
         const mixedCards = mixCards(data.slice(0, numberOfPairs));
+        return mixedCards;
+    }
+
+    const setGameCards = (mixedCards: object[]) => {
         setCards(mixedCards);
-        setCardsRefs(cardsRefs => Array(mixedCards.length).fill().map((_, i) => cardsRefs[i] || createRef()));
+        const _cardsRefs: any = Array(mixedCards.length).fill().map((_, i) => cardsRefs[i] || createRef());
+        setCardsRefs(_cardsRefs);
     }
 
     const getCardsData = () => {
@@ -66,28 +127,30 @@ export default function Game() {
     }
 
     useEffect(() => {
-        if (cards.length > 0 && discoveredPairs === cards.length / 2) {
+        if (numberOfPairs > 0 && discoveredPairs === numberOfPairs) {
             setTimeout(() => {
                 setWinningModalVisibility(true);
                 setTimeout(() => {
+                    setReady(false);
                     setWinningModalVisibility(false);
-                    reset();
-                }, 3500);
+                    if (gameType === GameType.ONLINE) {
+                        navigation.navigate('GameTypeSelect');
+                    }
+                    restartGame();
+                }, 3000);
             }, 1000);
         }
-    }, [discoveredPairs])
-
-    useEffect(() => {
         const isComputerTurn = gameType === GameType.COMPUTER && currentTurn === 1 && discoveredPairs < numberOfPairs;
         if (isComputerTurn) {
             setTimeout(() => {
                 var firstSelection = computerCardSelect(-1);
                 setTimeout(() => {
                     computerCardSelect(firstSelection);
-                }, 500);
-            }, 2000);
+                }, 300);
+            }, 1800);
         }
     }, [currentTurn, discoveredPairs])
+
     const computerCardSelect = (firstSelection: number) => {
         var randomNumber = Math.floor(Math.random() * unselectedCardsIndex.length);
         while (randomNumber === firstSelection) {
@@ -98,30 +161,47 @@ export default function Game() {
     }
 
     const reset = () => {
-        restartGame();
+        setFlippedCardsAmount(0);
+        dispatch(resetGame(numberOfPairs));
+        setSymbol(Symbol());
     }
 
     return (
         <View style={styles.container}>
             {
                 cards && cards.length > 0 ?
-                    <React.Fragment>
-                        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                            {
-                                cards.map((item, index) => {
-                                    return (
-                                        <Card ref={cardsRefs[index]} {...item} {...{ height, width, index, symbol, setFlippedCardsAmount, flippedCardsAmount }} key={index} />
-                                    )
-                                })
-                            }
+                    ready && !waitingToOtherPlayer ?
+                        <React.Fragment>
+                            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                                {
+                                    cards.map((item, index) => {
+                                        return (
+                                            <Card {...item} {...{ height, width, index, symbol, setFlippedCardsAmount, flippedCardsAmount }}
+                                                ref={cardsRefs[index]}
+                                                key={index}
+                                                onlineGameProps={{
+                                                    socket: gameType === GameType.ONLINE ? socket : null,
+                                                    gameId
+                                                }}
+                                            />
+                                        )
+                                    })
+                                }
+                            </View>
+                            <Score />
+                            <View style={{ flex: 0.9, flexDirection: 'row' }} >
+                                <Button text='חזרה' backgroundColor={colors.RED} onPress={() => navigation.goBack()} />
+                                <Button text='חדש' backgroundColor={colors.PURPLE} onPress={restartGame} />
+                            </View>
+                            <WinningPopup isVisible={isWinningModalVisible} {...{ otherPlayerDiconnected }} />
+                        </React.Fragment>
+                        :
+                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                            <View style={{ paddingHorizontal: 30, paddingVertical: 40, backgroundColor: 'white', ...shadowStyle(4), margin: 5 }}>
+                                <Text style={styles.text}>ממתינים להצטרפות של השחקן הנוסף</Text>
+                                <ActivityIndicator size='large' color='purple' />
+                            </View>
                         </View>
-                        <Score />
-                        <View style={{ flex: 0.9, flexDirection: 'row' }} >
-                            <Button text='חזרה' backgroundColor={colors.RED} onPress={() => navigation.goBack()} />
-                            <Button text='חדש' backgroundColor={colors.PURPLE} onPress={reset} />
-                        </View>
-                        <WinningPopup isVisible={isWinningModalVisible} />
-                    </React.Fragment>
                     :
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                         <ActivityIndicator size='large' color='purple' />
@@ -138,5 +218,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: 25,
         paddingTop: 35,
         paddingBottom: 10
+    },
+    text: {
+        fontFamily: 'Abraham',
+        color: colors.DARK_GREY,
+        fontSize: 28,
+        textAlign: 'center',
+        marginBottom: 15
     }
 })

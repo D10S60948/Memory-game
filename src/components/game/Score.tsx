@@ -10,7 +10,7 @@ export default function Score() {
     const { nicknames: { player1, player2 }, gameType } = useSelector((state: RootState) => state.gameSettings);
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>ניקוד</Text>
+            <Text style={styles.title}>לוח תוצאות</Text>
             <View style={{ flex: 1, width: '100%', flexDirection: 'row-reverse' }}>
                 <View style={{ flex: 1, alignItems: 'center' }}>
                     {turn === 0 && <View style={styles.point} />}

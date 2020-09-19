@@ -11,16 +11,15 @@ import { GameType } from '../shared/types';
 export default function GameTypeSelect() {
     const navigation = useNavigation();
     const dispatch = useDispatch();
-
     const select = (type: GameType) => {
         dispatch(setGameType(type));
         navigation.navigate('CategorySelect');
     }
     const againstComputer = () => select(GameType.COMPUTER);
     const sameDevice = () => select(GameType.SAME_DEVICE);
+    const online = () => select(GameType.ONLINE);
     return (
         <View style={styles.container}>
-            {/* <BackButton /> */}
             <Title text='סוג משחק' marginTop={40} />
             <View style={styles.selectionArea}>
                 <Line />
@@ -28,7 +27,7 @@ export default function GameTypeSelect() {
                 <Line />
                 <Selection text='נגד מישהו אחר על אותו המכשיר' onPress={sameDevice} />
                 <Line />
-                <Selection text='נגד מישהו אחר מרחבי הרשת' onPress={() => console.log('ניסיון')} soon />
+                <Selection text='נגד מישהו אחר מרחבי הרשת' onPress={online} soon={false} />
                 <Line />
             </View>
         </View>

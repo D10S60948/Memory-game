@@ -9,8 +9,8 @@ import {
 const initialState: GameSettingsStateTypes = {
     gameType: 0,
     nicknames: {
-        player1: '',
-        player2: ''
+        player1: 'שחקן 1',
+        player2: 'שחקן 2'
     },
     numberOfPairs: 10,
     category: 'animals'

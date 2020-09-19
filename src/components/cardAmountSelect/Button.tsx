@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { colors, shadowStyle } from '../../shared/consts';
 
 export interface ButtonType {

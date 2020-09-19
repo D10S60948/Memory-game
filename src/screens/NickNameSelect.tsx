@@ -24,10 +24,7 @@ export default function NickNameSelect() {
             <View style={{ flex: 1.2, justifyContent: 'space-evenly' }}>
                 {title.map((title, key) => <Title text={title} fontSize={40} key={key} />)}
                 <Nickname player={1} />
-                {
-                    gameType === GameType.SAME_DEVICE &&
-                    <Nickname player={2} />
-                }
+                {gameType !== GameType.ONLINE && <Nickname player={2} />}
                 <WideButton text='התחל משחק' onPress={() => navigation.navigate('Game')} />
             </View>
             <StatusBar style="auto" />

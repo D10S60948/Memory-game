@@ -9,12 +9,13 @@ interface Nicknames {
     player2: string;
 }
 
+export type CategoryType = 'animals' | 'sport' | 'transportation' | 'food' | 'cartoons';
 // state 
 interface GameSettingsState {
     gameType: GameType;
     nicknames: Nicknames;
     numberOfPairs: number;
-    category: 'animals' | 'sport' | 'transportation' | 'food' | 'cartoons';
+    category: CategoryType;
 }
 
 // actions
