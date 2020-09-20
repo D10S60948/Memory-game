@@ -35,6 +35,7 @@ const Card = React.forwardRef(({ image, value, height, width, index, symbol, set
     const [frontOpacity, setFrontOpacity] = useState(0);
     const [backOpacity, setBackOpacity] = useState(1);
     const [cardOpacity] = useState(new Animated.Value(1));
+    const [rotate, setRotate] = useState('');
     const [isDiscovered, setDiscovered] = useState(false);
     const [available, setAvailability] = useState(true);
 
@@ -43,6 +44,7 @@ const Card = React.forwardRef(({ image, value, height, width, index, symbol, set
 
     useEffect(() => {
         resetToInitialState();
+        setRotate(`${degreeGenerator(index)}deg`);
     }, [symbol])
 
     useEffect(() => {
@@ -60,10 +62,8 @@ const Card = React.forwardRef(({ image, value, height, width, index, symbol, set
                 }
                 else {
                     flip();
-                    if (selectedValues.length === 2) {
-                        if (index === firstFlippedIndex) {
-                            dispatch(resetSelectedCards());
-                        }
+                    if (index === firstFlippedIndex) {
+                        dispatch(resetSelectedCards());
                     }
                 }
                 if (index === firstFlippedIndex) {
@@ -172,10 +172,8 @@ const Card = React.forwardRef(({ image, value, height, width, index, symbol, set
 
     useImperativeHandle(ref, () => ({
         cardSelect() {
-            if (isFlipped === false) {
-                flip();
-                dispatch(setSelectedCard(value, index));
-            }
+            flip();
+            dispatch(setSelectedCard(value, index));
         }
     }));
 
@@ -189,7 +187,6 @@ const Card = React.forwardRef(({ image, value, height, width, index, symbol, set
     });
 
     const degreeGenerator = (num: number) => (num * 29) % 17 * (num % 2 === 0 ? -1 : 1);
-    const rotate = `${degreeGenerator(index)}deg`;
 
     return (
         <Animated.View

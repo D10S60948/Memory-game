@@ -1,4 +1,6 @@
-export const Data = [
+import { CategoryListType } from '../../shared/types';
+
+export const Data: CategoryListType[] = [
     {
         title: 'בעלי חיים',
         image: require('../../../assets/images/categories/animals.jpg'),

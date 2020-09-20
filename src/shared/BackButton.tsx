@@ -1,20 +1,32 @@
-import React from 'react';
-import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { Entypo } from '@expo/vector-icons';
+import React, { useEffect } from 'react';
+import { BackHandler, StyleSheet, Text, TouchableOpacity } from 'react-native';
 
-export default function BackButton() {
-    const navigation = useNavigation();
+interface BackButtonProps {
+    goBack: (() => void) | undefined;
+}
+
+export default function BackButton({ goBack }: BackButtonProps) {
     return (
         <TouchableOpacity
             style={styles.container}
-            onPress={() => navigation.goBack()}
+            onPress={goBack}
         >
             <Text style={styles.text}>חזור</Text>
             <Entypo name="chevron-left" size={24} color="black" />
         </TouchableOpacity>
     );
 }
+
+export function useBackHandler(handler: (() => boolean | null | undefined)) {
+    useEffect(() => {
+        BackHandler.addEventListener('hardwareBackPress', handler);
+        return () => {
+            BackHandler.removeEventListener('hardwareBackPress', handler);
+        };
+    });
+}
+
 
 const styles = StyleSheet.create({
     container: {

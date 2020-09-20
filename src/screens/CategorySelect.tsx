@@ -1,23 +1,26 @@
 import React from 'react';
-import { FlatList, StyleSheet } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
 import { Card, data } from '../components/categorySelect';
 import { Title } from '../shared';
-import Background from '../shared/Background';
 import { colors } from '../shared/consts';
 
-export default function CategorySelect() {
+interface GameTypeSelectProps {
+    goOn: () => void;
+}
+
+export default function CategorySelect({ goOn }: GameTypeSelectProps) {
     return (
-        <Background bubbles backButton>
+        <View style={{ flex: 1 }} >
             <Title text='קטגוריה' marginBottom={20} />
             <FlatList
                 ListHeaderComponentStyle={{ marginTop: 30 }}
                 data={data}
-                renderItem={({ item }) => <Card {...item} />}
+                renderItem={({ item }) => <Card {...item} goOn={goOn} />}
                 keyExtractor={(_, i) => i.toString()}
                 numColumns={2}
                 showsVerticalScrollIndicator={false}
             />
-        </Background>
+        </View>
     );
 }
 

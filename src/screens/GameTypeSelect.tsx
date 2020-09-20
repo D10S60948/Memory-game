@@ -1,26 +1,27 @@
-import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { Line, Selection } from '../components/gameType';
 import { setGameType } from '../redux/gameSettings/actions';
 import { Title } from '../shared';
-import { colors } from '../shared/consts';
 import { GameType } from '../shared/types';
 
-export default function GameTypeSelect() {
-    const navigation = useNavigation();
+interface GameTypeSelectProps {
+    goOn: () => void;
+}
+
+export default function GameTypeSelect({ goOn }: GameTypeSelectProps) {
     const dispatch = useDispatch();
     const select = (type: GameType) => {
         dispatch(setGameType(type));
-        navigation.navigate('CategorySelect');
+        goOn();
     }
     const againstComputer = () => select(GameType.COMPUTER);
     const sameDevice = () => select(GameType.SAME_DEVICE);
     const online = () => select(GameType.ONLINE);
     return (
-        <View style={styles.container}>
-            <Title text='סוג משחק' marginTop={40} />
+        <View style={{ flex: 1 }} >
+            <Title text='סוג משחק' marginTop={80} marginBottom={30} />
             <View style={styles.selectionArea}>
                 <Line />
                 <Selection text='נגד המחשב' onPress={againstComputer} />
@@ -35,12 +36,6 @@ export default function GameTypeSelect() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: colors.BLUE,
-        paddingHorizontal: 15,
-        paddingVertical: 30
-    },
     selectionArea: {
         flex: 1,
         paddingHorizontal: 15,

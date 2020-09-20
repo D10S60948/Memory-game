@@ -5,12 +5,14 @@ import { useDispatch } from 'react-redux';
 import { Button, ButtonType } from '../components/cardAmountSelect';
 import { Line } from '../components/gameType';
 import { setNumberOfCardPairs } from '../redux/gameSettings/actions';
-import { BackButton, Title } from '../shared';
+import { Title } from '../shared';
 import { colors } from '../shared/consts';
-import Background from '../shared/Background';
 
+interface CardsAmountSelectProps {
+    goOn: () => void;
+}
 
-export default function CardsAmountSelect() {
+export default function CardsAmountSelect({ goOn }: CardsAmountSelectProps) {
 
     const navigation = useNavigation();
 
@@ -18,7 +20,7 @@ export default function CardsAmountSelect() {
 
     const select = (pairs: number) => {
         dispatch(setNumberOfCardPairs(pairs));
-        navigation.navigate('NickNameSelect');
+        goOn();
     }
 
     const buttons: Array<ButtonType> = [
@@ -39,8 +41,8 @@ export default function CardsAmountSelect() {
     ]
 
     return (
-        <Background backButton bubbles>
-            <Title text='כמה קלפים ?' marginBottom={32} />
+        <View style={{ flex: 1 }}>
+            <Title text='כמה קלפים ?' marginBottom={32} marginTop={30} />
             <Line />
             <View style={styles.selectionArea}>
                 {
@@ -51,7 +53,7 @@ export default function CardsAmountSelect() {
                 }
             </View>
             <Line />
-        </Background>
+        </View>
     );
 }
 

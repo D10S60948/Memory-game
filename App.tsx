@@ -12,6 +12,7 @@ import GameTypeSelect from './src/screens/GameTypeSelect';
 import CategorySelect from './src/screens/CategorySelect';
 import Game from './src/screens/Game';
 import NickNameSelect from './src/screens/NickNameSelect';
+import ScreensWrapper from './src/screens/ScreensWrapper';
 import CardsAmountSelect from './src/screens/CardsAmountSelect';
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -33,12 +34,14 @@ export default function App() {
             <Provider store={store}>
                 <NavigationContainer>
                     <Stack.Navigator headerMode='none'>
-                        <Stack.Screen name="Home" component={Home} />
+                        {/* <Stack.Screen name="Home" component={Home} />
                         <Stack.Screen name="GameTypeSelect" component={GameTypeSelect} />
                         <Stack.Screen name="CategorySelect" component={CategorySelect} />
                         <Stack.Screen name="NickNameSelect" component={NickNameSelect} />
+                        */}
+                        <Stack.Screen name="ScreensWrapper" component={ScreensWrapper} />
                         <Stack.Screen name="Game" component={Game} />
-                        <Stack.Screen name="CardsAmountSelect" component={CardsAmountSelect} />
+                        {/* <Stack.Screen name="CardsAmountSelect" component={CardsAmountSelect} /> */}
                     </Stack.Navigator>
                 </NavigationContainer>
             </Provider>

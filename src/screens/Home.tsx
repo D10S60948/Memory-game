@@ -1,17 +1,19 @@
-import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
+import { View } from 'react-native';
 import { Title, WideButton } from '../shared';
-import Background from '../shared/Background';
 
-export default function Home() {
-    const navigation = useNavigation();
+interface HomeProps {
+    goOn: () => void;
+}
+
+export default function Home({ goOn }: HomeProps) {
     return (
-        <Background bubbles style={{ justifyContent: 'space-around' }}>
+        <View style={{ flex: 1, justifyContent: 'space-around' }}>
             <Title text="ברוכים הבאים" />
             <Title text="למשחק הזיכרון" fontSize={64} />
-            <WideButton text="התחל" onPress={() => navigation.navigate('GameTypeSelect')} />
+            <WideButton text="התחל" onPress={goOn} />
             <StatusBar style="auto" />
-        </Background>
+        </View>
     );
 }

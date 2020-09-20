@@ -5,3 +5,12 @@ export enum GameType {
     ONLINE
 }
 
+export enum NavigationDirection {
+    BACK, FORWARD
+}
+
+export type CategoryListType = {
+    title: string,
+    image: any,
+    value: 'animals' | 'food' | 'sport' | 'transportation' | 'cartoons'
+}

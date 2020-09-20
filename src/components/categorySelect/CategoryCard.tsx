@@ -9,15 +9,17 @@ import { useDispatch } from 'react-redux';
 interface CategoryCardProps {
     title: string;
     image: ImageSourcePropType;
-    value: 'animals' | 'sport' | 'transportation' | 'food';
+    value: 'animals' | 'sport' | 'transportation' | 'food' | 'cartoons';
+    goOn: () => void;
 }
 
-export default function CategoryCard({ title, image, value }: CategoryCardProps) {
+export default function CategoryCard({ title, image, value, goOn }: CategoryCardProps) {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const onCategorySelect = () => {
         dispatch(setCategory(value));
-        navigation.navigate('CardsAmountSelect');
+        // navigation.navigate('CardsAmountSelect');
+        goOn();
     }
     return (
         <ImageBackground

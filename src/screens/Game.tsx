@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { createRef, useEffect, useState } from 'react';
-import { ActivityIndicator, Dimensions, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, BackHandler, Dimensions, StyleSheet, Text, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import io from 'socket.io-client';
 import { socketUrl } from '../../config';
@@ -76,6 +76,10 @@ export default function Game() {
                 socket.on('gameEnd', () => {
                     setOtherPlayerDiconnected(true);
                     setWinningModalVisibility(true);
+                })
+                BackHandler.addEventListener('hardwareBackPress', () => {
+                    socket?.disconnect();
+                    return false;
                 })
             })
         }
@@ -166,6 +170,13 @@ export default function Game() {
         setSymbol(Symbol());
     }
 
+    const goBack = () => {
+        if(gameType === GameType.ONLINE) {
+            socket?.disconnect();
+        }
+        navigation.goBack()
+    }
+
     return (
         <View style={styles.container}>
             {
@@ -190,7 +201,7 @@ export default function Game() {
                             </View>
                             <Score />
                             <View style={{ flex: 0.9, flexDirection: 'row' }} >
-                                <Button text='חזרה' backgroundColor={colors.RED} onPress={() => navigation.goBack()} />
+                                <Button text='חזרה' backgroundColor={colors.RED} onPress={goBack} />
                                 <Button text='חדש' backgroundColor={colors.PURPLE} onPress={restartGame} />
                             </View>
                             <WinningPopup isVisible={isWinningModalVisible} {...{ otherPlayerDiconnected }} />
